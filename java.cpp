@@ -61,7 +61,8 @@ return minHeap;
 
 /*  swap two main heap nodes*/void swapMinHeapNodes (MinHeapNode* a, MinHeapNode* b)
 {
-    MinHeapNode temp = *a;
+    MinHeapNode temp = *a;     
+                                 
     *a = *b;
     *b = temp;
 }
@@ -140,6 +141,8 @@ void insertUtil (TrieNode** root, MinHeap* minHeap, const char* word, const char
             (*root)->isEnd = 1;
             (*root)->frequency = 1;
         }
+        cout << dupWord << " -> " << (*root)->frequency << endl;
+        cout.flush();
         insertInMinHeap(minHeap, root, dupWord);
     }
 }
@@ -164,18 +167,26 @@ void printKMostFreq(FILE* fp, int k)
     MinHeap* minHeap = createMinHeap(k);
     TrieNode* root = NULL;
     char buffer[MAX_WORD_SIZE];
-    while (fscanf(fp, "%s", buffer) != EOF)
+
+    while (fscanf(fp, "%29s", buffer) != EOF)   // changed: %s -> %29s (buffer-overflow guard)
         insertTrieAndHeap(buffer, &root, minHeap);
+    cout << "--- Final top " << k << " ---" << endl;   // added
     displayMinHeap(minHeap);
 }
 
-int main()
+int main(int argc, char* argv[])
 {
-    int k = 5;
-    FILE *fp = fopen("file.txt", "r");
+    const char* filename = (argc > 1) ? argv[1] : "file.txt";
+    int k = (argc > 2) ? atoi(argv[2]) : 5;
+
+    FILE *fp = fopen(filename, "r");
     if (fp == NULL)
-        printf ("File dont exist Dawg ");
+        printf("File does not exist: %s\n", filename);
     else
-        printKMostFreq (fp, k);
+    {
+        cout << "--- Live word counts (as each word is read) ---" << endl;
+        printKMostFreq(fp, k);
+        fclose(fp);
+    }
     return 0;
 }

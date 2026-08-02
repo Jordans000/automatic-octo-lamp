@@ -1,1 +1,3 @@
-# automatic-octo-lamp
+automatic-octo-lamp
+
+Trial and Error 
